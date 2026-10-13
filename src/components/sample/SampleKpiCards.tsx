@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Grid, Paper, Box, Typography, Avatar, useTheme, alpha } from "@mui/material";
 import {

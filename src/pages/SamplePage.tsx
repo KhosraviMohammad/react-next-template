@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { Box, CircularProgress, Alert } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setHeaderInfo } from "@/store/actions";
 import {
@@ -21,8 +23,10 @@ import type { SampleFormData } from "@/schemas/sampleSchemas";
 
 const SamplePage: React.FC = () => {
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const categoryFilterParam = searchParams.get("category_id");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const categoryFilterParam = searchParams ? searchParams.get("category_id") : null;
 
   useEffect(() => {
     dispatch(
@@ -80,12 +84,15 @@ const SamplePage: React.FC = () => {
   const handleCategorySelect = (categoryId: number | "ALL") => {
     setSelectedCategoryId(categoryId);
     setPage(0);
+    const params = new URLSearchParams(searchParams ? searchParams.toString() : "");
     if (categoryId === "ALL") {
-      searchParams.delete("category_id");
-      setSearchParams(searchParams);
+      params.delete("category_id");
     } else {
-      setSearchParams({ category_id: String(categoryId) });
+      params.set("category_id", String(categoryId));
     }
+    const queryString = params.toString();
+    const currentPath = pathname ?? "";
+    router.push(queryString ? `${currentPath}?${queryString}` : currentPath);
   };
 
   // Filter Samples

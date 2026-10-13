@@ -2,7 +2,7 @@ import { configureStore, type Reducer } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import { STORE_CONFIG } from "./constants";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import type { Persistor, PersistConfig } from "redux-persist";
+import { persistStore, persistReducer, type Persistor, type PersistConfig } from "redux-persist";
 
 // Import individual reducers
 import { themeReducer, headerReducer } from "./reducers";
@@ -20,9 +20,8 @@ export type RootState = ReturnType<typeof rootReducer>;
 export type AppStore = ReturnType<typeof configureStore>;
 
 // Check if we're in browser environment
-const isBrowser = typeof window !== "undefined" && typeof localStorage !== "undefined";
-const isSSR = import.meta.env.MODE === "ssr";
-const shouldDisablePersistence = import.meta.env.VITE_DISABLE_REDUX_PERSIST === "true";
+const isBrowser = typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+const shouldDisablePersistence = process?.env?.NEXT_PUBLIC_DISABLE_REDUX_PERSIST === "true";
 
 let store: AppStore;
 let persistor: Persistor | null = null;
@@ -40,10 +39,8 @@ const customStorage = {
 };
 
 try {
-  if (isBrowser && !isSSR && !shouldDisablePersistence) {
+  if (isBrowser && !shouldDisablePersistence) {
     // Browser environment: use redux-persist
-    const { persistStore, persistReducer } = await import("redux-persist");
-
     const persistConfig: PersistConfig<RootState> = {
       key: STORE_CONFIG.PERSIST_KEY,
       storage: customStorage,

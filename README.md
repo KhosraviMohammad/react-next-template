@@ -1,6 +1,6 @@
-# سامانه داشبورد مدیریتی (PP-App)
+# سامانه داشبورد مدیریتی (PP-App - Next.js)
 
-این پروژه یک پنل داشبورد مدرن، ماژولار و بهینه‌سازی‌شده است که با استفاده از **React 19**، **TypeScript** و **Vite** پیاده‌سازی شده و از طراحی اختصاصی با **Material UI** و پشتیبانی کامل از چینش **راست‌به‌چپ (RTL)** و حالت‌های تیره/روشن (Dark/Light mode) بهره می‌برد.
+این پروژه یک پنل داشبورد مدرن، ماژولار و بهینه‌سازی‌شده است که با استفاده از **Next.js 15 (App Router)**، **React 19** و **TypeScript** پیاده‌سازی شده و از طراحی اختصاصی با **Material UI** و پشتیبانی کامل از چینش **راست‌به‌چپ (RTL)** و حالت‌های تیره/روشن (Dark/Light mode) همراه با **Server-Side Rendering (SSR)** بدون پرش استایل (Zero FOUC) بهره می‌برد.
 
 ---
 
@@ -11,59 +11,70 @@ PP-App/
 ├── public/                          # فایل‌های استاتیک و عمومی (لوگو و تصاویر)
 │   ├── images/
 │   │   └── Logo1.png
-│   └── vite.svg
+│   └── favicon.svg
 ├── src/                             # سورس‌کد اصلی برنامه
+│   ├── app/                         # سیستم مسیریابی App Router در Next.js
+│   │   ├── (dashboard)/             # گروه مسیرهای داشبورد
+│   │   │   ├── layout.tsx           # پوسته کلی صفحات داشبورد
+│   │   │   ├── page.tsx             # صفحه اصلی (داشبورد)
+│   │   │   ├── sample/
+│   │   │   │   └── page.tsx         # صفحه ماژول نمونه (/sample)
+│   │   │   └── samples/
+│   │   │       └── page.tsx         # ریدایرکت خودکار به /sample
+│   │   ├── globals.css              # استایل‌های پایه و عمومی برنامه
+│   │   └── layout.tsx               # Root Layout اصلی (HTML, Body, Metadata, Providers)
 │   ├── assets/                      # منابع گرافیکی و آیکون‌ها
-│   │   ├── icons/                   # کامپوننت‌های SVG آیکون‌های سفارشی
-│   │   └── hero.png
+│   │   └── icons/                   # کامپوننت‌های SVG آیکون‌های سفارشی
 │   ├── components/                  # کامپوننت‌های رابط کاربری (UI Components)
 │   │   ├── layouts/                 # ساختار و اسکلت اصلی صفحه
-│   │   │   ├── DashboardLayout.tsx  # پوسته اصلی داشبورد و جانمایی سایدبار و هدر
+│   │   │   ├── DashboardLayout.tsx  # پوسته داشبورد و جانمایی سایدبار و هدر
 │   │   │   ├── Header.tsx           # نوار بالای صفحه (عنوان داینامیک، ابزارها و دکمه‌ها)
-│   │   │   └── Sidebar.tsx          # نوار کناری ناوبری تاشو با گرادیان و انیمیشن
+│   │   │   └── Sidebar.tsx          # نوار کناری ناوبری با next/navigation
 │   │   └── sample/                  # کامپوننت‌های ماژول نمونه (Sample Module)
 │   │       ├── SampleKpiCards.tsx       # کارت‌های شاخص عملکرد کلیدی (KPIs)
 │   │       ├── SampleHeaderControls.tsx # کنترل‌های بالای صفحه (جستجو، فیلتر دسته‌ها، دکمه افزودن)
 │   │       ├── SampleTable.tsx          # جدول نمایش داده‌ها همراه با صفحه‌بندی
 │   │       ├── SampleFormDialog.tsx     # دیالوگ ثبت و ایجاد آیتم جدید
 │   │       └── SampleValueDialog.tsx    # دیالوگ ویرایش سریع مقدار
-│   ├── pages/                       # صفحات اصلی برنامه
+│   ├── pages/                       # صفحات منطقی برنامه
 │   │   └── SamplePage.tsx           # صفحه نمونه با پیاده‌سازی کامل CRUD و هماهنگی با URL
 │   ├── providers/                   # ارائه‌دهندگان کانتکست‌های سراسری
-│   │   ├── MaterialUIProvider.tsx  # تم MUI، استایل‌های سفارشی، فونت‌های فارسی و پلاگین RTL
-│   │   └── ReduxProvider.tsx       # پرووایدر استور ریداکس و PersistGate
+│   │   ├── ClientProviders.tsx      # تجمیع پرووایدرهای کلاینت برای App Router
+│   │   ├── MaterialUIProvider.tsx   # تم MUI با Emotion Cache و useServerInsertedHTML برای RTL
+│   │   └── ReduxProvider.tsx        # پرووایدر استور ریداکس و PersistGate
 │   ├── schemas/                     # اعتبارسنجی داده‌ها و فرم‌ها با Zod
 │   │   └── sampleSchemas.ts         # اسکیمای فرم‌های نمونه و رزالور react-hook-form
-│   ├── store/                       # مدیریت حالت سراسری برنامه (Redux Toolkit)
-│   │   ├── actions/                 # اکشن‌های ریداکس
-│   │   ├── api/                     # اندپوینت‌های RTK Query
-│   │   │   └── sampleApi.ts         # سرویس ارتباط با API نمونه‌ها و کشینگ داده‌ها
-│   │   ├── reducers/                # اسلایس‌ها و ردیوسرها (تم، اطلاعات هدر و...)
-│   │   ├── selectors/               # سلکتورهای استیت
-│   │   ├── constants.ts             # تنظیمات و ثابت‌های استور
-│   │   ├── types.ts                 # تایپ‌های مربوط به وضعیت سراسری
-│   │   └── index.ts                 # ساخت استور و پیکربندی redux-persist
-│   ├── App.tsx                      # پیکربندی روت‌ها و استایل‌های ریست سراسری
-│   └── main.tsx                     # نقطه ورود اپلیکیشن (Entry Point)
+│   └── store/                       # مدیریت حالت سراسری برنامه (Redux Toolkit)
+│       ├── actions/                 # اکشن‌های ریداکس
+│       ├── api/                     # اندپوینت‌های RTK Query
+│       │   └── sampleApi.ts         # سرویس ارتباط با API نمونه‌ها و کشینگ داده‌ها
+│       ├── reducers/                # اسلایس‌ها و ردیوسرها (تم، اطلاعات هدر و...)
+│       ├── selectors/               # سلکتورهای استیت
+│       ├── constants.ts             # تنظیمات و ثابت‌های استور
+│       ├── types.ts                 # تایپ‌های مربوط به وضعیت سراسری
+│       └── index.ts                 # استور ریداکس سازگار با SSR و redux-persist
 ├── .husky/                          # گیت هوک‌ها جهت کنترل کیفیت کد قبل از کامیت
 ├── .prettierrc                      # قوانین فرمت‌بندی کد با Prettier
-├── eslint.config.js                 # تنظیمات لینت کد با ESLint (Flat Config)
-├── index.html                       # فایل پایه HTML
-├── package.json                     # پکیج‌ها، وابستگی‌ها و اسکریپت‌های اجرایی
-├── tsconfig.json                    # پیکربندی TypeScript
-└── vite.config.ts                   # تنظیمات سرور توسعه، آلیاس @ و پلاگین‌های Vite
+├── eslint.config.js                 # تنظیمات لینت کد با ESLint
+├── next.config.ts                   # کانفیگ Next.js، Emotion و پروکسی API
+├── next-env.d.ts                    # تعاریف تایپ Next.js
+├── package.json                     # وابستگی‌ها و اسکریپت‌های اجرایی
+└── tsconfig.json                    # پیکربندی TypeScript برای Next.js
 ```
 
 ---
 
 ## پشته فناوری (Tech Stack)
 
-* **هسته اصلی:** [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/)
-* **کامپایلر React:** فعال‌سازی `babel-plugin-react-compiler` جهت بهینه‌سازی خودکار رندرهای کامپوننت‌ها
-* **رابط کاربری:** `@mui/material` v9 + `@emotion/react` + `@emotion/styled`
-* **راست‌به‌چپ (RTL):** `@mui/stylis-plugin-rtl` + `stylis`
-* **مدیریت استیت:** `@reduxjs/toolkit` (RTK Query) + `redux-persist`
-* **مسیریابی:** `react-router-dom` v7
+* **فریم‌ورک اصلی:** [Next.js 15 (App Router)](https://nextjs.org) + [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org/)
+* **رابط کاربری و استایلینگ:**
+  * `@mui/material` v6 + `@emotion/react` + `@emotion/styled`
+  * چینش راست‌به‌چپ (RTL) با `@mui/stylis-plugin-rtl` و تزریق استایل‌های سرور از طریق `useServerInsertedHTML`
+  * سیستم تم دوگانه دارک/لایت با پالت رنگی هماهنگ و فونت‌های فارسی
+* **مدیریت استیت:**
+  * `@reduxjs/toolkit` (RTK Query) با قابلیت کشینگ خودکار و مدیریت تگ‌ها
+  * `redux-persist` با ذخیره‌سازی محلی و fallback امن در محیط سرور (Noop Storage)
+* **مسیریابی:** سیستم فایل‌محور Next.js 15 App Router با هوک‌های `useRouter`, `usePathname`, `useSearchParams` از `next/navigation`
 * **مدیریت فرم و اعتبارسنجی:** `react-hook-form` + `zod`
 * **اعلانات:** `react-toastify`
 
@@ -72,18 +83,21 @@ PP-App/
 ## دستورات اجرایی (Scripts)
 
 ```bash
-# نصب پکیج‌ها
+# نصب وابستگی‌ها
 npm install
 
-# اجرای سرور توسعه (پورت 5172)
+# اجرای سرور توسعه بر روی پورت 5172
 npm run dev
 
-# ساخت نسخه پروداکشن
+# ساخت نسخه نهایی پروداکشن
 npm run build
+
+# اجرای نسخه پروداکشن
+npm run start
 
 # بررسی خطاهای لینتر
 npm run lint
 
-# مرتب‌سازی و فرمت کدها
+# مرتب‌سازی و قالب‌بندی کدها
 npm run format
 ```

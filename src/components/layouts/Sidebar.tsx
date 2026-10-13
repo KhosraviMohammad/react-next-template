@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Box,
@@ -15,7 +17,7 @@ import {
 } from "@mui/material";
 import { LogoutIcon, ChevronLeftIcon } from "@/assets/icons";
 import { Assignment as SampleIcon } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 
 interface SidebarProps {
   drawerWidth: number;
@@ -34,8 +36,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   onDrawerToggle,
   onDesktopDrawerToggle,
 }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const theme = useTheme();
 
   const menuItems = [
@@ -149,14 +151,14 @@ const Sidebar: React.FC<SidebarProps> = ({
       <List sx={{ px: 1, pt: 1 }}>
         {menuItems.map((item) => {
           const isActive =
-            location.pathname === item.path ||
-            (item.path === "/sample" && location.pathname === "/");
+            pathname === item.path ||
+            (item.path === "/sample" && pathname === "/");
 
           return (
             <ListItem key={item.path} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
                 selected={isActive}
-                onClick={() => navigate(item.path)}
+                onClick={() => router.push(item.path)}
                 sx={{
                   minHeight: 48,
                   borderRadius: 2,
@@ -210,7 +212,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <List sx={{ px: 1 }}>
         <ListItem disablePadding>
           <ListItemButton
-            onClick={() => navigate("/login")}
+            onClick={() => router.push("/login")}
             sx={{
               minHeight: 48,
               borderRadius: 2,

@@ -1,13 +1,18 @@
+"use client";
+
 import React, { useState } from "react";
 import { Box, Toolbar } from "@mui/material";
-import { Outlet } from "react-router-dom";
 import Header from "@/components/layouts/Header";
 import Sidebar from "@/components/layouts/Sidebar";
 
 const drawerWidth = 240;
 const collapsedWidth = 64;
 
-const DashboardLayout: React.FC = () => {
+interface DashboardLayoutProps {
+  children?: React.ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopOpen, setDesktopOpen] = useState(false);
 
@@ -29,7 +34,6 @@ const DashboardLayout: React.FC = () => {
         collapsedWidth={collapsedWidth}
       />
 
-      {/* Sidebar - همیشه collapsedWidth دارد، با overlay باز می‌شود */}
       <Sidebar
         drawerWidth={drawerWidth}
         collapsedWidth={collapsedWidth}
@@ -39,18 +43,16 @@ const DashboardLayout: React.FC = () => {
         onDesktopDrawerToggle={handleDesktopDrawerToggle}
       />
 
-      {/* Main content - همیشه فقط collapsedWidth کم می‌شود */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 0,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          // ml: { sm: `${collapsedWidth}px` },
         }}
       >
         <Toolbar />
-        <Outlet />
+        {children}
       </Box>
     </Box>
   );
